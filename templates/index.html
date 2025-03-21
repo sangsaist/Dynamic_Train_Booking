@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Add Train</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <h1>Add New Train</h1>
+
+  <form id="trainForm">
+    <label>Train Name:</label>
+    <input type="text" id="train_name" required><br><br>
+
+    <label>Add Junctions:</label>
+    <div id="junctions_list">
+      <input type="text" class="junction" placeholder="Enter Junction (e.g., A)" required>
+    </div>
+    <button type="button" onclick="addJunction()">+ Add Junction</button><br><br>
+
+    <label>Number of Seats (max 20):</label>
+    <select id="seats_count" required>
+      <option value="">Select</option>
+      <!-- Options will be added dynamically -->
+    </select><br><br>
+
+    <button type="submit">Add Train</button>
+  </form>
+
+  <div id="response"></div>
+
+  <script>
+    // Populate seat count dropdown
+    const seatDropdown = document.getElementById('seats_count');
+    for (let i = 1; i <= 20; i++) {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = i;
+      seatDropdown.appendChild(opt);
+    }
+
+    function addJunction() {
+      const div = document.createElement('div');
+      div.innerHTML = `<input type="text" class="junction" placeholder="Enter Junction (e.g., B)" required>`;
+      document.getElementById('junctions_list').appendChild(div);
+    }
+
+    document.getElementById('trainForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const trainName = document.getElementById('train_name').value;
+      const junctions = Array.from(document.getElementsByClassName('junction')).map(input => input.value.trim()).filter(Boolean);
+      const seatsCount = parseInt(document.getElementById('seats_count').value);
+
+      if (junctions.length < 2) {
+        alert("Minimum two junctions are required!");
+        return;
+      }
+
+      fetch('/add_train', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          train_name: trainName,
+          junctions: junctions,
+          seats_count: seatsCount
+        })
+      })
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('response').innerHTML = `<p>${data.message}</p>`;
+          document.getElementById('trainForm').reset();
+        })
+        .catch(err => console.error(err));
+    });
+  </script>
+</body>
+
+</html>
