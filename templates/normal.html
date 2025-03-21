@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Normal Booking - Train Seat System</title>
+    <style>
+        body { font-family: Arial; background: #f4f4f4; }
+        h2 { color: #333; }
+        .seat { width: 50px; height: 50px; margin: 5px; display: inline-flex; align-items: center; justify-content: center; border-radius: 5px; color: white; cursor: pointer; }
+        .available { background-color: green; }
+        .booked { background-color: red; }
+        .selected { background-color: blue; }
+        .seat-container { margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<h2>Normal Booking</h2>
+
+<label>Select Train:</label>
+<select id="trainSelect"></select><br><br>
+
+<label>Select Passenger:</label>
+<select id="passengerSelect">
+    <option>A</option>
+    <option>B</option>
+    <option>C</option>
+    <option>D</option>
+</select><br><br>
+
+<label>Select Segment:</label>
+<select id="segmentSelect"></select><br><br>
+
+<div class="seat-container" id="seatContainer"></div>
+
+<br><button onclick="bookSeat()">Book Seat</button>
+<br><br><button onclick="resetBooking()">Reset Bookings</button>
+
+<h3>Booking History</h3>
+<div id="bookingHistory"></div>
+
+<script>
+const apiUrl = "http://127.0.0.1:5000";
+
+window.onload = function() {
+    fetchTrains();
+};
+
+function fetchTrains() {
+    fetch(`${apiUrl}/get_trains`)
+        .then(res => res.json())
+        .then(data => {
+            const trainSelect = document.getElementById('trainSelect');
+            trainSelect.innerHTML = data.trains.map(t => `<option>${t}</option>`).join('');
+            fetchSegments();
+        });
+}
+
+function fetchSegments() {
+    const train = document.getElementById('trainSelect').value;
+    fetch(`${apiUrl}/get_segments?train_name=${train}`)
+        .then(res => res.json())
+        .then(data => {
+            const segmentSelect = document.getElementById('segmentSelect');
+            segmentSelect.innerHTML = data.segments.map(seg => `<option>${seg[0]}-${seg[1]}</option>`).join('');
+            fetchSeats();
+        });
+}
+
+function fetchSeats() {
+    const train = document.getElementById('trainSelect').value;
+    const segment = document.getElementById('segmentSelect').value;
+    fetch(`${apiUrl}/get_seat_status?train_name=${train}&segment=${segment}`)
+        .then(res => res.json())
+        .then(data => {
+            const container = document.getElementById('seatContainer');
+            container.innerHTML = '';
+            data.seats.forEach(seat => {
+                const div = document.createElement('div');
+                div.className = `seat ${seat.status}`;
+                div.innerText = seat.name;
+                div.onclick = () => {
+                    document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+                    div.classList.add('selected');
+                };
+                container.appendChild(div);
+            });
+            loadBookingHistory();
+        });
+}
+
+function bookSeat() {
+    const train = document.getElementById('trainSelect').value;
+    const passenger = document.getElementById('passengerSelect').value;
+    const segment = document.getElementById('segmentSelect').value;
+    const selectedSeat = document.querySelector('.seat.selected');
+    if (!selectedSeat) return alert('Select a seat to book');
+    
+    fetch(`${apiUrl}/book_normal`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            train_name: train,
+            passenger: passenger,
+            segment: segment,
+            seat: selectedSeat.innerText
+        })
+    }).then(res => res.json())
+      .then(data => {
+        alert(data.message);
+        fetchSeats();
+      });
+}
+
+function resetBooking() {
+    const train = document.getElementById('trainSelect').value;
+    fetch(`${apiUrl}/reset`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({train_name: train})
+    }).then(res => res.json())
+      .then(data => {
+        alert(data.message);
+        fetchSeats();
+      });
+}
+
+function loadBookingHistory() {
+    const train = document.getElementById('trainSelect').value;
+    fetch(`${apiUrl}/get_booking_history?train_name=${train}`)
+        .then(res => res.json())
+        .then(data => {
+            const history = data.history.map(b => `<div>${b.passenger} → ${b.segment[0]}-${b.segment[1]} Seat: ${b.seat}</div>`).join('');
+            document.getElementById('bookingHistory').innerHTML = history;
+        });
+}
+
+document.getElementById('trainSelect').addEventListener('change', fetchSegments);
+document.getElementById('segmentSelect').addEventListener('change', fetchSeats);
+</script>
+
+</body>
+</html>
