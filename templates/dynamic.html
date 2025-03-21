@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dynamic Booking - Train Seat System</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
+        h2 { color: #333; }
+        label, select, button { margin: 10px 0; display: block; }
+        .allocation { background: #dff0d8; padding: 10px; border-radius: 5px; margin-top: 20px; }
+        .history { background: #e9ecef; padding: 10px; margin-top: 20px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+<h2>Dynamic Booking (Seat Switching)</h2>
+
+<label>Select Train:</label>
+<select id="trainSelect"></select>
+
+<label>Passenger Name:</label>
+<input type="text" id="passengerName">
+
+<label>Source:</label>
+<select id="sourceSelect"></select>
+
+<label>Destination:</label>
+<select id="destinationSelect"></select>
+
+<button onclick="dynamicBook()">Book Dynamically</button>
+
+<div class="allocation" id="allocationResult"></div>
+
+<h3>Booking History</h3>
+<div class="history" id="bookingHistory"></div>
+
+<script>
+const apiUrl = "http://127.0.0.1:5000";
+
+window.onload = function() {
+    fetchTrains();
+};
+
+function fetchTrains() {
+    fetch(`${apiUrl}/get_trains`)
+        .then(res => res.json())
+        .then(data => {
+            const trainSelect = document.getElementById('trainSelect');
+            trainSelect.innerHTML = data.trains.map(t => `<option>${t}</option>`).join('');
+            fetchJunctions();
+        });
+}
+
+function fetchJunctions() {
+    const train = document.getElementById('trainSelect').value;
+    fetch(`${apiUrl}/get_junctions?train_name=${train}`)
+        .then(res => res.json())
+        .then(data => {
+            const sourceSelect = document.getElementById('sourceSelect');
+            const destSelect = document.getElementById('destinationSelect');
+            sourceSelect.innerHTML = data.junctions.map(j => `<option>${j}</option>`).join('');
+            destSelect.innerHTML = data.junctions.map(j => `<option>${j}</option>`).join('');
+            loadBookingHistory();
+        });
+}
+
+function dynamicBook() {
+    const train = document.getElementById('trainSelect').value;
+    const passenger = document.getElementById('passengerName').value;
+    const source = document.getElementById('sourceSelect').value;
+    const destination = document.getElementById('destinationSelect').value;
+
+    if (source === destination) {
+        alert("Source and Destination cannot be the same.");
+        return;
+    }
+
+    fetch(`${apiUrl}/dynamic_book`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ train_name: train, passenger, source, destination })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.message.includes("Successful")) {
+            document.getElementById('allocationResult').innerHTML = 
+                `<strong>${data.message}</strong><br>Allocation: ${JSON.stringify(data.allocation)}`;
+            loadBookingHistory();
+        } else {
+            alert(data.message);
+        }
+    });
+}
+
+function loadBookingHistory() {
+    const train = document.getElementById('trainSelect').value;
+    fetch(`${apiUrl}/get_booking_history?train_name=${train}`)
+        .then(res => res.json())
+        .then(data => {
+            const history = data.history.map(b => 
+                `<div>${b.passenger} ➔ ${b.segment[0]}-${b.segment[1]} | Seat: ${b.seat}</div>`
+            ).join('');
+            document.getElementById('bookingHistory').innerHTML = history;
+        });
+}
+
+document.getElementById('trainSelect').addEventListener('change', fetchJunctions);
+</script>
+
+</body>
+</html>
