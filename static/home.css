@@ -1,0 +1,72 @@
+/* Reset & General Styling */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family:    'Poppins', sans-serif;
+    color: #ffffff;
+    overflow: hidden;
+}
+
+/* 4K Video Background */
+#bg-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+
+/* Content Box Centered */
+.content-box {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+/* Heading */
+.content-box h1 {
+    font-size: 3rem;
+    margin-bottom: 50px;
+    text-shadow: 2px 2px 5px #000000;
+}
+
+/* Glassmorphic Button Design */
+.glass-btn {
+    display: block;
+    width: 280px;
+    margin: 20px auto;
+    padding: 18px 0;
+    border-radius: 15px;
+    text-decoration: none;
+    color: #fff;
+    font-size: 1.3rem;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+    transition: all 0.4s ease;
+}
+
+/* Hover Effect */
+.glass-btn:hover {
+    transform: scale(1.08);
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Footer Styling */
+.footer {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+    color: #ccc;
+    font-size: 1rem;
+    text-shadow: 1px 1px 3px #000;
+}

@@ -1,0 +1,100 @@
+/* Full screen background image */
+body {
+    margin: 0;
+    padding: 0;
+    background: url('https://i.pinimg.com/originals/17/c3/b8/17c3b81a53e684b823267d9b447c06a1.jpg') no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Heading Style */
+h1 {
+    margin-top: 40px;
+    font-size: 2.8rem;
+    text-shadow: 2px 2px 8px #000;
+}
+
+/* Glassmorphic Form Container */
+form {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    padding: 35px 45px;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    width: 420px;
+    margin-top: 30px;
+}
+
+/* Labels */
+label {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Inputs and Dropdown */
+input[type="text"], select {
+    width: 95%;
+    padding: 12px;
+    margin-top: 8px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    color: #727272;
+    outline: none;
+    font-size: 1rem;
+}
+
+/* Buttons */
+button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.3);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+button:hover {
+    background: rgba(255, 255, 255, 0.4);
+    transform: scale(1.05);
+}
+
+/* Response */
+#response {
+    margin-top: 20px;
+    font-size: 1.1rem;
+    text-align: center;
+}
+
+/* Extra Styling for Added Junctions */
+#junctions_list input {
+    margin-bottom: 15px;
+}
+
+/* Add Junction button */
+button[type="button"] {
+    width: auto;
+    padding: 10px 15px;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    form {
+        width: 90%;
+        padding: 25px;
+    }
+    h1 {
+        font-size: 2rem;
+    }
+}

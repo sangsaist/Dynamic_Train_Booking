@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Train Seat Booking System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+</head>
+
+<body>
+    <!-- Video Background -->
+    <video autoplay muted loop id="bg-video">
+        <source src="{{ url_for('static', filename='train_background.mp4') }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Center Content -->
+    <div class="content-box">
+        <h1>Train Booking System</h1>
+
+        <!-- Each Button with Glass Effect -->
+        <a href="/Add_Train" class="glass-btn">Add Train</a>
+        <a href="/Normal_Booking" class="glass-btn">Normal Booking</a>
+        <a href="/Dynamic_Booking" class="glass-btn">Dynamic Booking</a>
+    </div>
+
+    <div class="footer">
+        Developed by sangsai | © OS PROJECT
+    </div>
+</body>
+
+</html>
