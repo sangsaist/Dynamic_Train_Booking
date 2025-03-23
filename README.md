@@ -23,9 +23,7 @@ A full-stack web application for train seat allocation with **Normal Booking** a
 ## 🗂 File Structure
 ```
 ├── app.py                 # Main Flask App
-├── addtrain.py            # Add Train Backend Logic
-├── normal.py              # Normal Booking Backend Logic
-├── dynamic.py             # Dynamic Booking Backend Logic
+├── 
 ├── templates/
 │   ├── index.html         # Add Train Page
 │   ├── normal.html        # Normal Booking Page
