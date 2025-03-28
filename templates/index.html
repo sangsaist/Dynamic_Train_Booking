@@ -20,11 +20,16 @@
     </div>
     <button type="button" onclick="addJunction()">+ Add Junction</button><br><br>
 
-    <label>Number of Seats (max 20):</label>
-    <select id="seats_count" required>
+    <label>Number of Coaches (Max 4):</label>
+    <select id="coach_count" required onchange="updateCompartments()">
       <option value="">Select</option>
-      <!-- Options will be added dynamically -->
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
     </select><br><br>
+
+    <div id="coach_details"></div>
 
     <button type="submit">Add Train</button>
   </form>
@@ -32,50 +37,80 @@
   <div id="response"></div>
 
   <script>
-    // Populate seat count dropdown
-    const seatDropdown = document.getElementById('seats_count');
-    for (let i = 1; i <= 20; i++) {
-      const opt = document.createElement('option');
-      opt.value = i;
-      opt.textContent = i;
-      seatDropdown.appendChild(opt);
-    }
-
     function addJunction() {
       const div = document.createElement('div');
       div.innerHTML = `<input type="text" class="junction" placeholder="Enter Junction (e.g., B)" required>`;
       document.getElementById('junctions_list').appendChild(div);
     }
 
+    function updateCompartments() {
+      const coachCount = parseInt(document.getElementById('coach_count').value);
+      const coachDetails = document.getElementById('coach_details');
+      coachDetails.innerHTML = "";
+
+      if (!isNaN(coachCount) && coachCount > 0) {
+        for (let c = 1; c <= coachCount; c++) {
+          const div = document.createElement('div');
+          div.innerHTML = `<h3>Coach ${c}</h3>`;
+          
+          for (let comp = 1; comp <= 5; comp++) {
+            div.innerHTML += `<p>Compartment ${comp}: 80 Seats</p>`;
+          }
+          coachDetails.appendChild(div);
+        }
+      }
+    }
+
     document.getElementById('trainForm').addEventListener('submit', function (e) {
       e.preventDefault();
 
-      const trainName = document.getElementById('train_name').value;
-      const junctions = Array.from(document.getElementsByClassName('junction')).map(input => input.value.trim()).filter(Boolean);
-      const seatsCount = parseInt(document.getElementById('seats_count').value);
+      const trainName = document.getElementById('train_name').value.trim();
+      const junctions = Array.from(document.getElementsByClassName('junction'))
+                            .map(input => input.value.trim())
+                            .filter(Boolean);
+      const coachCount = parseInt(document.getElementById('coach_count').value);
 
       if (junctions.length < 2) {
         alert("Minimum two junctions are required!");
         return;
       }
+      if (isNaN(coachCount) || coachCount < 1 || coachCount > 4) {
+        alert("Please select a valid number of coaches (1-4)!");
+        return;
+      }
+
+      const trainData = {
+        train_name: trainName,
+        junctions: junctions,
+        coach_count: coachCount,
+        compartments: []
+      };
+
+      for (let c = 1; c <= coachCount; c++) {
+        for (let comp = 1; comp <= 5; comp++) {
+          trainData.compartments.push({
+            coach: c,
+            compartment: comp,
+            seats: Array.from({ length: 80 }, (_, i) => `C${c}_CMP${comp}_S${i + 1}`)
+          });
+        }
+      }
 
       fetch('/add_train', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          train_name: trainName,
-          junctions: junctions,
-          seats_count: seatsCount
-        })
+        body: JSON.stringify(trainData)
       })
-        .then(response => response.json())
-        .then(data => {
-          document.getElementById('response').innerHTML = `<p>${data.message}</p>`;
-          document.getElementById('trainForm').reset();
-        })
-        .catch(err => console.error(err));
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('response').innerHTML = `<p>${data.message}</p>`;
+        document.getElementById('trainForm').reset();
+        document.getElementById('coach_details').innerHTML = "";
+      })
+      .catch(err => console.error(err));
     });
   </script>
+
 </body>
 
 </html>

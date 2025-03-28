@@ -128,15 +128,16 @@ Smart allocation for long routes using **dynamic seat switching**.
 ```
 
 ## 🔗 Backend API Endpoints
-| API            | Method | Description                          |
-|---------------- |------- |--------------------------------------|
+------------------------------------------------------------------
+| API             | Method | Description                         |
+|---------------- |------- |-------------------------------------|
 | /add_train      | POST   | Add new train                       |
 | /get_trains     | GET    | Fetch all trains                    |
 | /get_segments   | GET    | Fetch segments of a selected train  |
 | /book_normal    | POST   | Book seat using static logic        |
 | /book_dynamic   | POST   | Book seat with dynamic switching    |
 | /reset          | POST   | Clear bookings for a train          |
-
+-----------------------------------------------------------------
 ## 🤖 Dynamic Allocation Algorithm Flow (Greedy + Backtracking)
 1. Passenger selects a train and journey (source → destination)
 2. System checks seat availability **segment by segment**
@@ -245,7 +246,6 @@ Edit
 }
 ✅ Collection 4 (Optional for Admin): trains_meta
 Contains metadata like created time, updated time, reset status.
-
 json
 Copy
 Edit
@@ -262,4 +262,3 @@ Normal Booking: Updates bookings array in the respective train document.
 Dynamic Booking: Updates bookings with possible seat switches and logs in booking_history.
 Reset: Clears the bookings array of a specific train document.
 Booking History: booking_history can be shown as a table for UI/Reports.
-

@@ -21,7 +21,7 @@ h1 {
 
 /* Glassmorphic Form Container */
 form {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(253, 253, 253, 0.15);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
     padding: 35px 45px;
@@ -45,8 +45,8 @@ input[type="text"], select {
     margin-bottom: 20px;
     border: none;
     border-radius: 10px;
-    background: rgba(0, 0, 0, 0.2);
-    color: #727272;
+    background: rgba(63, 63, 63, 0.2);
+    color: #ffffff;
     outline: none;
     font-size: 1rem;
 }

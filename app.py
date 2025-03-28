@@ -33,19 +33,35 @@ def add_train():
     data = request.json
     train_name = data.get('train_name')
     junctions = data.get('junctions')  # List of junctions
-    seats_count = data.get('seats_count')
+    coach_count = data.get('coach_count')  # Number of coaches
+    compartments = data.get('compartments')  # Compartment details
 
-    if not train_name or not junctions or not seats_count:
+    if not train_name or not junctions or not coach_count or not compartments:
         return jsonify({"message": "All fields are required!"}), 400
 
-    seats = [f"S{i+1}" for i in range(seats_count)]
+    # Structure train data properly
     train_data = {
         "train_name": train_name,
         "junctions": junctions,
-        "seats": seats,
-        "bookings": []
+        "coaches": []
     }
+
+    for coach_num in range(1, coach_count + 1):
+        coach_data = {
+            "coach_number": coach_num,
+            "compartments": []
+        }
+        for comp_num in range(1, 6):  # Each coach has 5 compartments
+            compartment_seats = [f"C{coach_num}_CMP{comp_num}_S{i+1}" for i in range(80)]
+            coach_data["compartments"].append({
+                "compartment_number": comp_num,
+                "seats": compartment_seats
+            })
+        train_data["coaches"].append(coach_data)
+
+    # Insert into MongoDB
     trains_collection.insert_one(train_data)
+    
     return jsonify({"message": "Train added successfully!"}), 200
 
 # Fetch trains for dropdown
